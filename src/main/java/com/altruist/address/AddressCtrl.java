@@ -1,4 +1,4 @@
-package com.altruist.account;
+package com.altruist.address;
 
 import com.altruist.IdDto;
 import lombok.extern.slf4j.Slf4j;
@@ -15,23 +15,23 @@ import java.util.UUID;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
-@RequestMapping("/accounts")
+@RequestMapping("/addresses")
 @Slf4j
-public class AccountCtrl {
-    private final AccountSrv accountSrv;
+public class AddressCtrl {
+    private final AddressSrv addressSrv;
 
-    public AccountCtrl(final AccountSrv accountSrv) {
-        this.accountSrv = accountSrv;
+    public AddressCtrl(final AddressSrv addressSrv) {
+        this.addressSrv = addressSrv;
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<IdDto> create(
-            @RequestBody @Valid final AccountDto accountDto,
+            @RequestBody @Valid final AddressDto addressDto,
             final HttpServletRequest httpServletRequest
     ) throws URISyntaxException {
-        log.info("Received Account creation request [{}].", accountDto);
-        final UUID accountId = accountSrv.createAccount(accountDto);
+        log.info("Received Address creation request [{}].", addressDto);
+        final UUID accountId = addressSrv.create(addressDto);
         return ResponseEntity.created(new URI(httpServletRequest.getRequestURL() + "/" + accountId.toString()))
                 .body(new IdDto(accountId));
     }
