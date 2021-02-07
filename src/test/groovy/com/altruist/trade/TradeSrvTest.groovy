@@ -1,17 +1,20 @@
 package com.altruist.trade
 
+
 import org.junit.jupiter.api.extension.ExtendWith
 import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import spock.lang.Specification
+import spock.lang.Stepwise
 import spock.lang.Unroll
 
 import javax.validation.ConstraintViolationException
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
+@Stepwise
 class TradeSrvTest extends Specification {
 
     @SpringBean
@@ -103,7 +106,7 @@ class TradeSrvTest extends Specification {
 
         then:
         1 * mockTradeRepo.save(_) >> { Trade arg ->
-            with(arg){
+            with(arg) {
                 symbol == trade.symbol
                 side == trade.side
                 price == trade.price
@@ -112,6 +115,43 @@ class TradeSrvTest extends Specification {
 
             arg.trade_uuid = UUID.randomUUID()
             arg
+        }
+    }
+
+    @Unroll
+    def "Should not cancel trade if its status is not SUBMITTED"() {
+        given: "a failed trade id"
+        UUID cancelledTradeId = UUID.randomUUID()
+
+        when:
+        srv.cancel(cancelledTradeId.toString())
+
+        then:
+        1 * mockTradeRepo.findById(_ as UUID) >> {
+            Trade trade = new Trade()
+            trade.status = "FAILED"
+            trade.trade_uuid = cancelledTradeId
+            trade
+        }
+
+        and:
+        thrown(IllegalStateException)
+    }
+
+    @Unroll
+    def "Should be able to cancel trade if its status still is SUBMITTED"() {
+        given: "a trade id"
+        UUID tradeId = UUID.randomUUID()
+
+        when:
+        srv.cancel(tradeId.toString())
+
+        then:
+        1 * mockTradeRepo.findById(_ as UUID) >> {
+            Trade trade = new Trade()
+            trade.status = "SUBMITTED"
+            trade.trade_uuid = tradeId
+            trade
         }
     }
 }

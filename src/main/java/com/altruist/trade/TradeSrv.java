@@ -33,5 +33,15 @@ public class TradeSrv {
     }
 
     public void cancel(String tradeId) {
+        System.out.println(tradeId);
+        Trade trade = tradeRepo.findById(UUID.fromString(tradeId));
+        System.out.println(trade.trade_uuid);
+        if (!"SUBMITTED".equalsIgnoreCase(trade.status)) {
+            throw new IllegalStateException("The trade status must be SUBMITTED in order to cancel it");
+        }
+
+        trade.status = "CANCELLED";
+
+        tradeRepo.updateStatus(trade);
     }
 }

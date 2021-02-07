@@ -3,6 +3,7 @@ package com.altruist.trade;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -41,7 +42,23 @@ public class TradeRepo {
     }
 
     public List<TradeDto> fetchAll() {
+        log.info("Fetching all trade records.");
         String sql = "SELECT * FROM trade.trade";
         return jdbcOperations.query(sql, new BeanPropertyRowMapper<>(TradeDto.class));
+    }
+
+    public Trade findById(UUID tradeId) {
+        log.info("Fetching trade {}.", tradeId);
+        String sql = "SELECT * FROM trade.trade WHERE trade_uuid=:trade_uuid";
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("trade_uuid", tradeId);
+        return jdbcOperations.queryForObject(sql, params, new BeanPropertyRowMapper<>(Trade.class));
+    }
+
+    public void updateStatus(Trade trade) {
+        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(trade);
+        log.info("Updating trade [{}].", trade);
+        String sql = "UPDATE trade.trade SET status=:status::trade.status WHERE trade_uuid=:trade_uuid";
+        jdbcOperations.update(sql, params);
     }
 }
