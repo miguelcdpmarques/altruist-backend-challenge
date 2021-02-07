@@ -43,14 +43,59 @@ class TradeSrvTest extends Specification {
     }
 
     @Unroll
+    def "Should validate for missing field #field"() {
+        given: "a trade with a missing field"
+        TradeDto trade = new TradeDto(
+                symbol: "V",
+                quantity: 10,
+                price: 2,
+                side: "BUY",
+                status: "SUBMITTED"
+        )
+        trade[field] = null
+
+        when:
+        srv.create(trade)
+
+        then:
+        thrown(ConstraintViolationException)
+
+        where:
+        field << ["symbol", "quantity", "price", "side", "status", "account_uuid"]
+    }
+
+    @Unroll
+    def "Should validate for blank field #field"() {
+        given: "a trade with a blank field"
+        TradeDto trade = new TradeDto(
+                symbol: "GOOG",
+                quantity: 2900,
+                price: 139.2,
+                side: "BUY",
+                status: "SUBMITTED"
+        )
+        trade[field] = ""
+
+        when:
+        srv.create(trade)
+
+        then:
+        thrown(ConstraintViolationException)
+
+        where:
+        field << ["symbol", "side", "status"]
+    }
+
+    @Unroll
     def "Should not throw exceptions if the trade is valid"() {
-        given: "a trade with quantity or price equal to zero"
+        given: "a valid trade object"
         TradeDto trade = new TradeDto(
                 symbol: "WMT",
                 quantity: 1,
                 price: 1,
                 side: "SELL",
-                status: "SUBMITTED"
+                status: "SUBMITTED",
+                account_uuid: UUID.randomUUID()
         )
 
         when:

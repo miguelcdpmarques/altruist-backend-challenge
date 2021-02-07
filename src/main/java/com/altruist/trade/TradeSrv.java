@@ -22,6 +22,7 @@ public class TradeSrv {
         trade.price = tradeDto.price;
         trade.quantity = tradeDto.quantity;
         trade.status = tradeDto.status;
+        trade.account_uuid = tradeDto.account_uuid;
         return tradeRepo.save(trade)
                 .trade_uuid;
     }

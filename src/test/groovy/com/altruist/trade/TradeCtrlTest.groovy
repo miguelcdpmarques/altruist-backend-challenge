@@ -30,7 +30,9 @@ class TradeCtrlTest extends Specification {
                 symbol: "TSLA",
                 quantity: 2,
                 price: 80,
-                status: "SUBMITTED"
+                side: "BUY",
+                status: "SUBMITTED",
+                account_uuid: UUID.randomUUID()
         )
         UUID expectedId = UUID.randomUUID()
 
