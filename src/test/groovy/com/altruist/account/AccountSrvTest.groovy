@@ -1,11 +1,26 @@
 package com.altruist.account
 
+import org.junit.jupiter.api.extension.ExtendWith
+import org.spockframework.spring.SpringBean
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import spock.lang.Specification
+import spock.lang.Stepwise
 import spock.lang.Unroll
 
+import javax.validation.ConstraintViolationException
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@Stepwise
 class AccountSrvTest extends Specification {
+
+    @SpringBean
     AccountRepo mockAccountRepo = Mock()
-    AccountSrv srv = new AccountSrv(mockAccountRepo)
+
+    @Autowired
+    AccountSrv srv
 
     @Unroll
     def "Should validate for missing account field #field"() {
@@ -13,92 +28,34 @@ class AccountSrvTest extends Specification {
         AccountDto account = new AccountDto(
                 username: "username123",
                 email: "email@example.com",
+                address_uuid: UUID.randomUUID()
         )
         account[field] = null
 
         when:
-        srv.createAccount(account)
+        srv.create(account)
 
         then:
-        thrown(NullPointerException)
+        thrown(ConstraintViolationException)
 
         where:
         field << ["username", "email"]
     }
 
-    def "Should validate for missing address field #field"() {
-        given: "an address missing fields"
-        AccountDto account = new AccountDto(
-                username: "username123",
-                email: "email@example.com",
-                name: "Some Name",
-                street: "Some street",
-                city: "Some city",
-                state: "CA",
-                zipcode: 99999
-        )
-        account[field] = null
-
-        when:
-        srv.createAccount(account)
-
-        then:
-        thrown(NullPointerException)
-
-        where:
-        field << ["name", "street", "city", "state"]
-    }
-
-    def "Should validate for missing address field zipcode"() {
-        given: "an address missing zipcode"
-        AccountDto account = new AccountDto(
-                username: "username123",
-                email: "email@example.com",
-                name: "Some Name",
-                street: "Some street",
-                city: "Some city",
-                state: "CA"
-        )
-
-        when:
-        srv.createAccount(account)
-
-        then:
-        thrown(NumberFormatException)
-    }
-
-    def "Should save account and address"() {
+    def "Should save account"() {
         given: "an account"
+        UUID expectedAddressId = UUID.randomUUID()
         AccountDto account = new AccountDto(
                 username: "username123",
                 email: "email@example.com",
-                name: "Some Name",
-                street: "Some street",
-                city: "Some city",
-                state: "CA",
-                zipcode: 99999
+                address_uuid: expectedAddressId
         )
-        UUID expectedAddressId = UUID.randomUUID()
         UUID expectedAccountId = UUID.randomUUID()
 
         when:
-        srv.createAccount(account)
+        srv.create(account)
 
-        then: "the address is saved"
-        1 * mockAccountRepo.saveAddress(_) >> { Account arg ->
-            with(arg){
-                name == account.name
-                street == account.street
-                city == account.city
-                state == account.state
-                zipcode == account.zipcode as Integer
-            }
-
-            arg.address_uuid = expectedAddressId
-            arg
-        }
-
-        and: "the account is saved"
+        then: "the account is saved"
         1 * mockAccountRepo.save(_) >> { Account arg ->
             with(arg){
                 username == account.username

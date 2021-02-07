@@ -1,43 +1,25 @@
 package com.altruist.account;
 
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.Objects;
+import javax.validation.Valid;
 import java.util.UUID;
 
+@Validated
 @Service
 public class AccountSrv {
     private final AccountRepo accountRepo;
 
-    public AccountSrv(AccountRepo accountRepo) {
+    public AccountSrv(final AccountRepo accountRepo) {
         this.accountRepo = accountRepo;
     }
 
-    public UUID createAccount(AccountDto accountDto) {
-        Objects.requireNonNull(accountDto.username);
-        Objects.requireNonNull(accountDto.email);
+    public UUID create(final @Valid AccountDto accountDto) {
         Account account = new Account();
         account.username = accountDto.username;
         account.email = accountDto.email;
-        account.name = accountDto.name;
-        account.street = accountDto.street;
-        account.city = accountDto.city;
-        account.state = accountDto.state;
-        account.zipcode = Integer.parseInt(accountDto.zipcode);
-
-        if (null != accountDto.name ||
-                null != accountDto.street ||
-                null != accountDto.city ||
-                null != accountDto.state ||
-                null != accountDto.zipcode
-        ) {
-            Objects.requireNonNull(accountDto.name);
-            Objects.requireNonNull(accountDto.street);
-            Objects.requireNonNull(accountDto.city);
-            Objects.requireNonNull(accountDto.state);
-            Objects.requireNonNull(accountDto.zipcode);
-            account = accountRepo.saveAddress(account);
-        }
+        account.address_uuid = UUID.fromString(accountDto.address_uuid);
 
         return accountRepo.save(account)
                 .account_uuid;

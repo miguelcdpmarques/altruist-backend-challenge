@@ -31,7 +31,7 @@ public class AccountCtrl {
             final HttpServletRequest httpServletRequest
     ) throws URISyntaxException {
         log.info("Received Account creation request [{}].", accountDto);
-        final UUID accountId = accountSrv.createAccount(accountDto);
+        final UUID accountId = accountSrv.create(accountDto);
         return ResponseEntity.created(new URI(httpServletRequest.getRequestURL() + "/" + accountId.toString()))
                 .body(new IdDto(accountId));
     }

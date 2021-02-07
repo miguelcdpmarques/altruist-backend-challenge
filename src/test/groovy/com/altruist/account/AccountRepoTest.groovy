@@ -1,5 +1,7 @@
 package com.altruist.account
 
+import com.altruist.address.Address
+import com.altruist.address.AddressRepo
 import com.altruist.config.DbConfig
 import com.altruist.config.RepoConfig
 import groovy.sql.Sql
@@ -27,32 +29,30 @@ class AccountRepoTest extends Specification {
     AccountRepo repo
 
     @Autowired
+    AddressRepo addressRepo
+
+    @Autowired
     Sql sql
 
     @Shared
     Account account
 
-    def "Inserts an address"() {
+    def "Inserts an account"() {
         given: "an address"
-        account = new Account(
+        Address address = new Address(
                 name: "Some Name",
                 street: "Some street",
                 city: "Some city",
                 state: "CA",
-                zipcode: 99999
+                zipcode: 98989
         )
+        Address savedAddress = addressRepo.save(address)
 
-        when:
-        repo.saveAddress(account)
-
-        then: "the address id is returned"
-        account.address_uuid
-    }
-
-    def "Inserts an account"() {
-        given: "an account"
+        and: "an account"
+        account = new Account()
         account.username = "username123"
         account.email = "email@example.com"
+        account.address_uuid = savedAddress.address_uuid
 
         when:
         repo.save(account)

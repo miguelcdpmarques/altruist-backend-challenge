@@ -31,8 +31,8 @@ public class AddressCtrl {
             final HttpServletRequest httpServletRequest
     ) throws URISyntaxException {
         log.info("Received Address creation request [{}].", addressDto);
-        final UUID accountId = addressSrv.create(addressDto);
-        return ResponseEntity.created(new URI(httpServletRequest.getRequestURL() + "/" + accountId.toString()))
-                .body(new IdDto(accountId));
+        final UUID addressId = addressSrv.create(addressDto);
+        return ResponseEntity.created(new URI(httpServletRequest.getRequestURL() + "/" + addressId.toString()))
+                .body(new IdDto(addressId));
     }
 }
