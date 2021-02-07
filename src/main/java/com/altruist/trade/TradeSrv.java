@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public class TradeSrv {
                 .collect(Collectors.toList());
     }
 
-    public void cancel(final String tradeId) {
+    public void cancel(@Valid @NotBlank final String tradeId) {
         final Trade trade = tradeRepo.findById(UUID.fromString(tradeId));
         if (!SUBMITTED_STATUS.equalsIgnoreCase(trade.status)) {
             throw new IllegalStateException("The trade status must be SUBMITTED in order to cancel it");

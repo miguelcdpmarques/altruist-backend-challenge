@@ -154,4 +154,16 @@ class TradeSrvTest extends Specification {
             trade
         }
     }
+
+    @Unroll
+    def "Should validate the trade-id when attempting to cancel trade"() {
+        given: "a blank trade-id"
+
+        when:
+        srv.cancel("")
+
+        then:
+        thrown(ConstraintViolationException)
+    }
+
 }
