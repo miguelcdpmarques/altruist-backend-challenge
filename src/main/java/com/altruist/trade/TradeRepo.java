@@ -41,10 +41,10 @@ public class TradeRepo {
         return trade;
     }
 
-    public List<TradeDto> fetchAll() {
+    public List<Trade> fetchAll() {
         log.info("Fetching all trade records.");
         String sql = "SELECT * FROM trade.trade";
-        return jdbcOperations.query(sql, new BeanPropertyRowMapper<>(TradeDto.class));
+        return jdbcOperations.query(sql, new BeanPropertyRowMapper<>(Trade.class));
     }
 
     public Trade findById(UUID tradeId) {

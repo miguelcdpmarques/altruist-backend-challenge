@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Validated
 @Service
@@ -29,13 +30,14 @@ public class TradeSrv {
     }
 
     public List<TradeDto> read() {
-        return tradeRepo.fetchAll();
+        return tradeRepo.fetchAll()
+                .stream()
+                .map(this::mapToTradeDto)
+                .collect(Collectors.toList());
     }
 
     public void cancel(String tradeId) {
-        System.out.println(tradeId);
         Trade trade = tradeRepo.findById(UUID.fromString(tradeId));
-        System.out.println(trade.trade_uuid);
         if (!"SUBMITTED".equalsIgnoreCase(trade.status)) {
             throw new IllegalStateException("The trade status must be SUBMITTED in order to cancel it");
         }
@@ -43,5 +45,16 @@ public class TradeSrv {
         trade.status = "CANCELLED";
 
         tradeRepo.updateStatus(trade);
+    }
+
+    private TradeDto mapToTradeDto(Trade trade) {
+        TradeDto dto = new TradeDto();
+        dto.symbol = trade.symbol;
+        dto.quantity = trade.quantity;
+        dto.price = trade.price;
+        dto.side = trade.side;
+        dto.status = trade.status;
+        dto.account_uuid = trade.account_uuid;
+        return dto;
     }
 }

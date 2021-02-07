@@ -61,13 +61,14 @@ class TradeRepoTest extends Specification {
         when:
         List allTrades = tradeRepo.fetchAll()
 
-        TradeDto expectedTrade = new TradeDto(
+        Trade expectedTrade = new Trade(
                 symbol: trade.symbol,
                 side: trade.side,
                 quantity: trade.quantity,
                 price: trade.price,
                 status: trade.status,
-                account_uuid: trade.account_uuid
+                account_uuid: trade.account_uuid,
+                trade_uuid: trade.trade_uuid
         )
 
         then: "all trades are returned"
