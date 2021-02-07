@@ -1,15 +1,13 @@
 package com.altruist.trade;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -42,16 +40,8 @@ public class TradeRepo {
         return trade;
     }
 
-    public List<TradeDto> read() {
+    public List<TradeDto> fetchAll() {
         String sql = "SELECT * FROM trade.trade";
-        return jdbcOperations.query(sql, new RowMapper<TradeDto>() {
-
-            @Override
-            public TradeDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-                TradeDto tradeDto = new TradeDto();
-                tradeDto.setSymbol(rs.getString("symbol"));
-                return tradeDto;
-            }
-        });
+        return jdbcOperations.query(sql, new BeanPropertyRowMapper<>(TradeDto.class));
     }
 }

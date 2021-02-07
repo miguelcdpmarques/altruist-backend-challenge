@@ -56,4 +56,21 @@ class TradeRepoTest extends Specification {
         then: "the trade id is returned"
         trade.trade_uuid
     }
+
+    def "Returns all trades"() {
+        when:
+        List allTrades = tradeRepo.fetchAll()
+
+        TradeDto expectedTrade = new TradeDto(
+                symbol: trade.symbol,
+                side: trade.side,
+                quantity: trade.quantity,
+                price: trade.price,
+                status: trade.status,
+                account_uuid: trade.account_uuid
+        )
+
+        then: "all trades are returned"
+        allTrades.contains(expectedTrade)
+    }
 }

@@ -29,6 +29,6 @@ public class TradeSrv {
     }
 
     public List<TradeDto> read() {
-        return tradeRepo.read();
+        return tradeRepo.fetchAll();
     }
 }
