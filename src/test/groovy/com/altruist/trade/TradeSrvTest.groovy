@@ -1,15 +1,24 @@
 package com.altruist.trade
 
-
+import org.junit.jupiter.api.extension.ExtendWith
+import org.spockframework.spring.SpringBean
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.security.InvalidParameterException
+import javax.validation.ConstraintViolationException
 
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
 class TradeSrvTest extends Specification {
+
+    @SpringBean
     TradeRepo mockTradeRepo = Mock()
 
-    TradeSrv srv = new TradeSrv(mockTradeRepo)
+    @Autowired
+    TradeSrv srv
 
     @Unroll
     def "Should validate for invalid field #field"() {
@@ -27,7 +36,7 @@ class TradeSrvTest extends Specification {
         srv.create(trade)
 
         then:
-        thrown(InvalidParameterException)
+        thrown(ConstraintViolationException)
 
         where:
         field << ["quantity", "price"]
@@ -43,7 +52,6 @@ class TradeSrvTest extends Specification {
                 side: "SELL",
                 status: "SUBMITTED"
         )
-        UUID expectedTradeId = UUID.randomUUID()
 
         when:
         srv.create(trade)

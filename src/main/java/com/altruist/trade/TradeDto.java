@@ -3,6 +3,7 @@ package com.altruist.trade;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Min;
 import java.util.UUID;
 
@@ -12,10 +13,10 @@ public class TradeDto {
   public String symbol;
   public String side;
 
-  @Min(0)
-  public int quantity;
+  @Min(1)
+  public Integer quantity;
 
-  @Min(0)
+  @DecimalMin("0.01")
   public double price;
   public String status;
   public UUID account_uuid;

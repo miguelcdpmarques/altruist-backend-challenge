@@ -1,15 +1,12 @@
 package com.altruist.trade
 
-
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.spockframework.spring.SpringBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
 import spock.lang.Specification
-import spock.mock.DetachedMockFactory
 
 import static org.hamcrest.Matchers.containsString
 import static org.springframework.http.MediaType.APPLICATION_JSON
@@ -24,13 +21,16 @@ class TradeCtrlTest extends Specification {
     @Autowired
     ObjectMapper objectMapper
 
-    @Autowired
-    TradeSrv mockTradeSrv
+    @SpringBean
+    TradeSrv mockTradeSrv = Mock()
 
     def "Should accept trade requests"() {
         given: "an trade request"
         TradeDto req = new TradeDto(
-
+                symbol: "TSLA",
+                quantity: 2,
+                price: 80,
+                status: "SUBMITTED"
         )
         UUID expectedId = UUID.randomUUID()
 
@@ -51,15 +51,5 @@ class TradeCtrlTest extends Specification {
         results.andExpect(header().exists("Location"))
                 .andExpect(header().string("Location", containsString("/trades/$expectedId")))
         results.andExpect(content().json("""{"id":"$expectedId"}"""))
-    }
-
-    @TestConfiguration
-    static class TestConfig {
-        DetachedMockFactory factory = new DetachedMockFactory()
-
-        @Bean
-        TradeSrv tradeSrv() {
-            factory.Mock(TradeSrv)
-        }
     }
 }

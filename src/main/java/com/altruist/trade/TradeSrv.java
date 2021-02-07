@@ -1,11 +1,13 @@
 package com.altruist.trade;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
-import java.security.InvalidParameterException;
+import javax.validation.Valid;
 import java.util.UUID;
 
-@Component
+@Validated
+@Service
 public class TradeSrv {
     private final TradeRepo tradeRepo;
 
@@ -13,11 +15,7 @@ public class TradeSrv {
         this.tradeRepo = tradeRepo;
     }
 
-    public UUID create(final TradeDto tradeDto) {
-        if (tradeDto.price == 0 || tradeDto.quantity == 0) {
-            throw new InvalidParameterException();
-        }
-
+    public UUID create(@Valid final TradeDto tradeDto) {
         final Trade trade = new Trade();
         trade.symbol = tradeDto.symbol;
         trade.side = tradeDto.side;
