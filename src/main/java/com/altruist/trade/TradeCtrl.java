@@ -43,4 +43,10 @@ public class TradeCtrl {
         log.info("Received Trade read request");
         return tradeSrv.read();
     }
+
+    @DeleteMapping("/{tradeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void cancel(@PathVariable String tradeId) {
+        tradeSrv.cancel(tradeId);
+    }
 }

@@ -31,4 +31,7 @@ public class TradeSrv {
     public List<TradeDto> read() {
         return tradeRepo.fetchAll();
     }
+
+    public void cancel(String tradeId) {
+    }
 }

@@ -6,10 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultActions
+import spock.lang.Shared
 import spock.lang.Specification
 
 import static org.hamcrest.Matchers.containsString
 import static org.springframework.http.MediaType.APPLICATION_JSON
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -25,6 +27,9 @@ class TradeCtrlTest extends Specification {
     @SpringBean
     TradeSrv mockTradeSrv = Mock()
 
+    @Shared
+    UUID tradeId
+
     def "Should accept a trade creation request"() {
         given: "a trade request"
         TradeDto req = new TradeDto(
@@ -35,7 +40,7 @@ class TradeCtrlTest extends Specification {
                 status: "SUBMITTED",
                 account_uuid: UUID.randomUUID()
         )
-        UUID expectedId = UUID.randomUUID()
+        tradeId = UUID.randomUUID()
 
         when: "the request is submitted"
         ResultActions results = mvc.perform(post("/trades")
@@ -45,15 +50,15 @@ class TradeCtrlTest extends Specification {
         )
 
         then: "the request is processed"
-        1 * mockTradeSrv.create(req) >> expectedId
+        1 * mockTradeSrv.create(req) >> tradeId
 
         and: "a Created response is returned"
         results.andExpect(status().isCreated())
 
         and: "the order ID is returned"
         results.andExpect(header().exists("Location"))
-                .andExpect(header().string("Location", containsString("/trades/$expectedId")))
-        results.andExpect(content().json("""{"id":"$expectedId"}"""))
+                .andExpect(header().string("Location", containsString("/trades/${tradeId}")))
+        results.andExpect(content().json("""{"id":"${tradeId}"}"""))
     }
 
     def "Should return existing trades"() {
@@ -75,5 +80,19 @@ class TradeCtrlTest extends Specification {
 
         and: "a list of trades is returned"
         results.andExpect(content().json("""[{symbol:"B"}]"""))
+    }
+
+    def "Should accept a trade cancellation request"() {
+        given: "a cancel request"
+
+        when: "the request is submitted"
+        ResultActions results = mvc.perform(delete("/trades/" + tradeId)
+                .accept(APPLICATION_JSON))
+
+        then: "the request is processed"
+        1 * mockTradeSrv.cancel(tradeId.toString())
+
+        and: "a Created response is returned"
+        results.andExpect(status().isOk())
     }
 }
