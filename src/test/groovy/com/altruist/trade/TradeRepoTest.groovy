@@ -4,7 +4,6 @@ import com.altruist.account.Account
 import com.altruist.account.AccountRepo
 import com.altruist.config.DbConfig
 import com.altruist.config.RepoConfig
-import groovy.sql.Sql
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -37,8 +36,8 @@ class TradeRepoTest extends Specification {
     def "Inserts a trade"() {
         given: "a trade"
         Account account = new Account();
-        account.username = "username123"
-        account.email = "email@example.com"
+        account.username = "dummy_user"
+        account.email = "dummy@useremail.com"
 
         accountRepo.save(account)
 
