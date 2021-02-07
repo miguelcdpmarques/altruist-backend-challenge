@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS trade.trade
 (
     trade_uuid UUID NOT NULL DEFAULT uuid_generate_v4(),
     account_uuid UUID NOT NULL,
-    symbol char(4) NOT NULL,
+    symbol TEXT NOT NULL,
     side trade.side NOT NULL,
     status trade.status NOT NULL,
     quantity INTEGER NOT NULL,
