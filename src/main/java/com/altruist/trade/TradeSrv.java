@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 @Validated
@@ -25,5 +26,9 @@ public class TradeSrv {
         trade.account_uuid = tradeDto.account_uuid;
         return tradeRepo.save(trade)
                 .trade_uuid;
+    }
+
+    public List<TradeDto> read() {
+        return tradeRepo.read();
     }
 }

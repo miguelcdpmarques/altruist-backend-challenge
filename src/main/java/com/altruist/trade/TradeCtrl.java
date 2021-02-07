@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -34,5 +35,12 @@ public class TradeCtrl {
         UUID tradeId = tradeSrv.create(tradeDto);
         return ResponseEntity.created(new URI(httpServletRequest.getRequestURL() + "/" + tradeId.toString()))
                 .body(new IdDto(tradeId));
+    }
+
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public List<TradeDto> read() {
+        log.info("Received Trade read request");
+        return tradeSrv.read();
     }
 }

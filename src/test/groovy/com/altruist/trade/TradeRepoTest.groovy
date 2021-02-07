@@ -35,7 +35,7 @@ class TradeRepoTest extends Specification {
 
     def "Inserts a trade"() {
         given: "a trade"
-        Account account = new Account();
+        Account account = new Account()
         account.username = "dummy_user"
         account.email = "dummy@useremail.com"
 
