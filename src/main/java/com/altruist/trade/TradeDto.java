@@ -13,23 +13,23 @@ import java.util.UUID;
 @NoArgsConstructor
 public class TradeDto {
 
-  @NotBlank
-  public String symbol;
+    @NotBlank
+    public String symbol;
 
-  @NotBlank
-  public String side;
+    @NotBlank
+    public String side;
 
-  @NotNull
-  @Min(1)
-  public Integer quantity;
+    @NotNull
+    @Min(1)
+    public Integer quantity;
 
-  @NotNull
-  @DecimalMin("0.01")
-  public Double price;
+    @NotNull
+    @DecimalMin("0.01")
+    public Double price;
 
-  @NotBlank
-  public String status;
+    @NotBlank
+    public String status;
 
-  @NotNull
-  public UUID account_uuid;
+    @NotNull
+    public UUID account_uuid;
 }
