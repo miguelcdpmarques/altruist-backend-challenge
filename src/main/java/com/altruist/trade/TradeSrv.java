@@ -11,6 +11,9 @@ import java.util.stream.Collectors;
 @Validated
 @Service
 public class TradeSrv {
+    private static final String SUBMITTED_STATUS = "SUBMITTED";
+    private static final String CANCELLED_STATUS = "CANCELLED";
+
     private final TradeRepo tradeRepo;
 
     public TradeSrv(final TradeRepo tradeRepo) {
@@ -38,11 +41,11 @@ public class TradeSrv {
 
     public void cancel(final String tradeId) {
         final Trade trade = tradeRepo.findById(UUID.fromString(tradeId));
-        if (!"SUBMITTED".equalsIgnoreCase(trade.status)) {
+        if (!SUBMITTED_STATUS.equalsIgnoreCase(trade.status)) {
             throw new IllegalStateException("The trade status must be SUBMITTED in order to cancel it");
         }
 
-        trade.status = "CANCELLED";
+        trade.status = CANCELLED_STATUS;
 
         tradeRepo.updateStatus(trade);
     }
