@@ -21,18 +21,18 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class TradeCtrl {
     private final TradeSrv tradeSrv;
 
-    public TradeCtrl(TradeSrv tradeSrv) {
+    public TradeCtrl(final TradeSrv tradeSrv) {
         this.tradeSrv = tradeSrv;
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<IdDto> create(
-            @RequestBody @Valid TradeDto tradeDto,
-            HttpServletRequest httpServletRequest
+            @RequestBody @Valid final TradeDto tradeDto,
+            final HttpServletRequest httpServletRequest
     ) throws URISyntaxException {
         log.info("Received Trade creation request [{}].", tradeDto);
-        UUID tradeId = tradeSrv.create(tradeDto);
+        final UUID tradeId = tradeSrv.create(tradeDto);
         return ResponseEntity.created(new URI(httpServletRequest.getRequestURL() + "/" + tradeId.toString()))
                 .body(new IdDto(tradeId));
     }
@@ -46,7 +46,7 @@ public class TradeCtrl {
 
     @DeleteMapping("/{tradeId}")
     @ResponseStatus(HttpStatus.OK)
-    public void cancel(@PathVariable String tradeId) {
+    public void cancel(@PathVariable final String tradeId) {
         tradeSrv.cancel(tradeId);
     }
 }

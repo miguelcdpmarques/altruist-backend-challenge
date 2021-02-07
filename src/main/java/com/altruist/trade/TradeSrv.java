@@ -36,8 +36,8 @@ public class TradeSrv {
                 .collect(Collectors.toList());
     }
 
-    public void cancel(String tradeId) {
-        Trade trade = tradeRepo.findById(UUID.fromString(tradeId));
+    public void cancel(final String tradeId) {
+        final Trade trade = tradeRepo.findById(UUID.fromString(tradeId));
         if (!"SUBMITTED".equalsIgnoreCase(trade.status)) {
             throw new IllegalStateException("The trade status must be SUBMITTED in order to cancel it");
         }
@@ -47,8 +47,8 @@ public class TradeSrv {
         tradeRepo.updateStatus(trade);
     }
 
-    private TradeDto mapToTradeDto(Trade trade) {
-        TradeDto dto = new TradeDto();
+    private TradeDto mapToTradeDto(final Trade trade) {
+        final TradeDto dto = new TradeDto();
         dto.symbol = trade.symbol;
         dto.quantity = trade.quantity;
         dto.price = trade.price;

@@ -16,7 +16,7 @@ public class AccountSrv {
     }
 
     public UUID create(final @Valid AccountDto accountDto) {
-        Account account = new Account();
+        final Account account = new Account();
         account.username = accountDto.username;
         account.email = accountDto.email;
         account.address_uuid = UUID.fromString(accountDto.address_uuid);

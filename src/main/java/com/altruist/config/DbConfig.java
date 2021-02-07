@@ -18,14 +18,14 @@ public class DbConfig implements FlywayConfigurationCustomizer {
   @SneakyThrows
   @Bean
   public DataSource dataSource() {
-    EmbeddedPostgres embeddedPostgres = EmbeddedPostgres.builder()
+    final EmbeddedPostgres embeddedPostgres = EmbeddedPostgres.builder()
         .setPort(port)
         .start();
     return embeddedPostgres.getPostgresDatabase();
   }
 
   @Override
-  public void customize(FluentConfiguration configuration) {
+  public void customize(final FluentConfiguration configuration) {
     configuration.dataSource(dataSource());
   }
 }

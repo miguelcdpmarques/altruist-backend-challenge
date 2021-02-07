@@ -18,18 +18,18 @@ import java.util.UUID;
 public class TradeRepo {
     private final NamedParameterJdbcOperations jdbcOperations;
 
-    public TradeRepo(NamedParameterJdbcOperations jdbcOperations) {
+    public TradeRepo(final NamedParameterJdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
 
-    public Trade save(Trade trade) {
-        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(trade);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+    public Trade save(final Trade trade) {
+        final BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(trade);
+        final KeyHolder keyHolder = new GeneratedKeyHolder();
         log.info("Saving trade [{}].", trade);
-        String sql = "INSERT INTO trade.trade (symbol, side, quantity, price, status, account_uuid) VALUES (:symbol, :side::trade.side, :quantity, :price, :status::trade.status, :account_uuid)";
+        final String sql = "INSERT INTO trade.trade (symbol, side, quantity, price, status, account_uuid) VALUES (:symbol, :side::trade.side, :quantity, :price, :status::trade.status, :account_uuid)";
         jdbcOperations.update(sql, params, keyHolder);
-        UUID id;
-        Map<String, Object> keys = keyHolder.getKeys();
+        final UUID id;
+        final Map<String, Object> keys = keyHolder.getKeys();
         if (null != keys) {
             id = (UUID) keys.get("trade_uuid");
             log.info("Inserted trade record {}.", id);
@@ -43,22 +43,22 @@ public class TradeRepo {
 
     public List<Trade> fetchAll() {
         log.info("Fetching all trade records.");
-        String sql = "SELECT * FROM trade.trade";
+        final String sql = "SELECT * FROM trade.trade";
         return jdbcOperations.query(sql, new BeanPropertyRowMapper<>(Trade.class));
     }
 
-    public Trade findById(UUID tradeId) {
+    public Trade findById(final UUID tradeId) {
         log.info("Fetching trade {}.", tradeId);
-        String sql = "SELECT * FROM trade.trade WHERE trade_uuid=:trade_uuid";
-        MapSqlParameterSource params = new MapSqlParameterSource();
+        final String sql = "SELECT * FROM trade.trade WHERE trade_uuid=:trade_uuid";
+        final MapSqlParameterSource params = new MapSqlParameterSource();
         params.addValue("trade_uuid", tradeId);
         return jdbcOperations.queryForObject(sql, params, new BeanPropertyRowMapper<>(Trade.class));
     }
 
-    public void updateStatus(Trade trade) {
-        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(trade);
+    public void updateStatus(final Trade trade) {
+        final BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(trade);
         log.info("Updating trade [{}].", trade);
-        String sql = "UPDATE trade.trade SET status=:status::trade.status WHERE trade_uuid=:trade_uuid";
+        final String sql = "UPDATE trade.trade SET status=:status::trade.status WHERE trade_uuid=:trade_uuid";
         jdbcOperations.update(sql, params);
     }
 }

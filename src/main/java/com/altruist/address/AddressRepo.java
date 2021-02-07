@@ -16,19 +16,19 @@ import java.util.UUID;
 public class AddressRepo {
     private final NamedParameterJdbcOperations jdbcOperations;
 
-    public AddressRepo(NamedParameterJdbcOperations jdbcOperations) {
+    public AddressRepo(final NamedParameterJdbcOperations jdbcOperations) {
         this.jdbcOperations = jdbcOperations;
     }
 
-    public Address save(Address address) {
-        BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(address);
+    public Address save(final Address address) {
+        final BeanPropertySqlParameterSource params = new BeanPropertySqlParameterSource(address);
         params.registerSqlType("state", Types.VARCHAR);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        final KeyHolder keyHolder = new GeneratedKeyHolder();
         log.info("Saving address [{}].", address);
-        String sql = "INSERT INTO trade.address (name, street, city, state, zipcode) VALUES (:name, :street, :city, :state::trade.state, :zipcode)";
+        final String sql = "INSERT INTO trade.address (name, street, city, state, zipcode) VALUES (:name, :street, :city, :state::trade.state, :zipcode)";
         jdbcOperations.update(sql, params, keyHolder);
-        UUID id;
-        Map<String, Object> keys = keyHolder.getKeys();
+        final UUID id;
+        final Map<String, Object> keys = keyHolder.getKeys();
         if (null != keys) {
             id = (UUID) keys.get("address_uuid");
             log.info("Inserted address record {}.", id);
